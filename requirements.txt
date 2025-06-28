@@ -1,0 +1,7 @@
+faiss-cpu
+sentence-transformers
+tqdm
+openai  
+python-dotenv
+google-generativeai
+python-dotenv
