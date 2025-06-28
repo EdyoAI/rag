@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
-from rag.retrieve_generate import load_index_and_meta, retrieve_similar, build_prompt
+from rag.retrieve_generate import load_index_and_meta, retrieve_similar, build_prompt,clean_llm_response
 from rag.llm import generate_from_llm
 from config import *
 
@@ -32,13 +32,15 @@ def generate_mcqs(req: GenerateRequest):
         raise HTTPException(status_code=500, detail=f"Error during retrieval: {str(e)}")
 
     if not matches:
-        raise HTTPException(status_code=404, detail="No matching data found.")
+        raise HTTPException(status_code=400, detail="No matching data found.")
 
     try:
         prompt = build_prompt(matches, req.count)
-        response = generate_from_llm(prompt)
+        prompt1=clean_llm_response(prompt)
+        response = generate_from_llm(prompt1)
+        response1=clean_llm_response(response)
         return {
-            "generated_questions": response
+            "generated_questions": response1
         }
 
     except Exception as e:
